@@ -1,37 +1,32 @@
-import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7';
-
 import './style.css';
 
-const margin = {
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-};
-
-const radius = 50;
-const xCenter1 = 50;
-const yCenter1 = 50;
+const radius = 100;
 
 const offsetFactor = 1.2;
 const offset = offsetFactor * radius;
 
-const originX = xCenter1 + offset * 0.5;
-const originY = yCenter1 + Math.sqrt(3) * offset * 0.5;
+// COORDINATES
+const xCenter1 = radius;
+const yCenter1 = radius;
+
+const xCenter2 = xCenter1 + offset;
+const yCenter2 = yCenter1;
+
+const xCenter3 = xCenter1 + offset * 0.5;
+const yCenter3 = yCenter1 + Math.sqrt(3) * offset * 0.5;
 
 const svg = d3
   .select('body')
   .append('svg')
   .attr('width', '100%')
   .attr('height', '100%')
-  .attr('viewBox', '0 0 100 100')
-  .style('background-color', 'gray');
+  .attr('viewBox', '-250 -250 500 500');
 
 const g = svg
   .append('g')
   .attr(
     'transform',
-    `translate( ${-originX + radius + margin.left} , ${margin.right} )`
+    `translate(${-xCenter3} , ${(-yCenter3 - radius) * 0.5} )`
   );
 
 const circleOne = g
@@ -41,17 +36,13 @@ const circleOne = g
   .attr('fill', 'none')
   .attr('transform', `translate( ${xCenter1} , ${yCenter1} )`);
 
-const xCenter2 = xCenter1 + offset;
-
 const circleTwo = g
   .append('circle')
   .attr('r', radius)
   // .attr('stroke', '#ffe41e')
   .attr('fill', 'none')
-  .attr('transform', `translate( ${xCenter2} , ${yCenter1} )`);
+  .attr('transform', `translate( ${xCenter2} , ${yCenter2} )`);
 
-const xCenter3 = xCenter1 + offset * 0.5;
-const yCenter3 = yCenter1 + Math.sqrt(3) * offset * 0.5;
 const circleThree = g
   .append('circle')
   .attr('r', radius)
@@ -129,21 +120,11 @@ const sunPoints = [
   [1, 6, 2],
 ];
 
-const roundedTriPoints = [[5, 4, 6]];
+const roundedTriPoints = [
+  [5, 4, 6],
+];
 
-for (const points of ironPoints) {
-  const ptCycle = points
-    .map((i) => xPoints[i - 1])
-    .concat(points.map((i) => yPoints[i - 1]));
-  const shape = makeIronShapes(ptCycle);
-
-  g.append('path')
-    .attr('d', shape)
-    .attr('class', 'segment')
-    .attr('fill', '#cc6666')
-    .attr('opacity', 0.5);
-}
-
+// OUTER SEGMENTS
 for (const points of sunPoints) {
   const ptCycle = points
     .map((i) => xPoints[i - 1])
@@ -153,7 +134,21 @@ for (const points of sunPoints) {
   g.append('path')
     .attr('d', shape)
     .attr('class', 'segment')
-    .attr('fill', '#6699cc')
+    .attr('fill', 'green')
+    .attr('opacity', 0.5);
+}
+
+// INNER INTERSECTIONS
+for (const points of ironPoints) {
+  const ptCycle = points
+    .map((i) => xPoints[i - 1])
+    .concat(points.map((i) => yPoints[i - 1]));
+  const shape = makeIronShapes(ptCycle);
+
+  g.append('path')
+    .attr('d', shape)
+    .attr('class', 'segment')
+    .attr('fill', 'red')
     .attr('opacity', 0.5);
 }
 
@@ -167,11 +162,11 @@ for (const points of roundedTriPoints) {
   g.append('path')
     .attr('d', shape)
     .attr('class', 'segment')
-    .attr('fill', '#66cc66')
+    .attr('fill', 'blue')
     .attr('opacity', 0.5);
 }
 
-// ADD EVENT LISTENERS
+// ANIMATION
 g.selectAll('path.segment')
   .on('mouseover', function () {
     d3.select(this).transition().attr('opacity', 1.0).duration(500);
@@ -180,6 +175,7 @@ g.selectAll('path.segment')
     d3.select(this).transition().attr('opacity', 0.5).duration(500);
   });
 
+// TEXT
 g.append('text').text('1').attr('x', xIsect1).attr('y', yIsect1);
 g.append('text').text('2').attr('x', xIsect2).attr('y', yIsect2);
 g.append('text').text('3').attr('x', xIsect3).attr('y', yIsect3);

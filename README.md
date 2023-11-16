@@ -1,3 +1,1 @@
-# js-etoktu
-
-[Edit in Codeflow ⚡️](https://stackblitz.com/~/github.com/yevheniizh/js-etoktu)
+# Venn diagram using D3.js
